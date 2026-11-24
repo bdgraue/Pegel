@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Ubuntu ${{ matrix.ubuntu }}
+    runs-on: ubuntu-latest
+    # KF6 and Qt ≥ 6.5 are not in the runner's own Ubuntu, so the build runs in the release it packages for.
+    container: ubuntu:${{ matrix.ubuntu }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu: ["26.04", "26.10"]
+    steps:
+      - name: Abhängigkeiten
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends \
+            ca-certificates cmake ninja-build g++ dpkg-dev file nodejs \
+            qt6-base-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-tools-dev qt6-l10n-tools \
+            libkirigami-dev libkf6statusnotifieritem-dev libkf6dbusaddons-dev \
+            appstream desktop-file-utils \
+            dbus-daemon fonts-dejavu-core qml6-module-qttest \
+            qml6-module-org-kde-kirigami qml6-module-org-kde-desktop qml6-module-qtquick \
+            qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-templates \
+            qml6-module-qtcore qml6-module-qtqml qml6-module-qtqml-models
+      - uses: actions/checkout@v7
+      - name: Tests
+        run: node --test tests/*.test.mjs
+      - name: Metadaten prüfen
+        run: |
+          desktop-file-validate data/io.github.bdgraue.Pegel.desktop
+          appstreamcli validate --no-net data/io.github.bdgraue.Pegel.metainfo.xml
+      - name: Bauen
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Wno-dev
+          cmake --build build
+      - name: UI-Tests
+        # Offscreen, auf einem eigenen D-Bus und gegen ein nachgebautes quota-axi (tests/ui/bin/quota-axi).
+        run: ctest --test-dir build --output-on-failure
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: screenshots-ubuntu-${{ matrix.ubuntu }}
+          path: build/tests/ui/artifacts/*.png
+          if-no-files-found: ignore
+      - name: Tag passt zur Version
+        if: startsWith(github.ref, 'refs/tags/v')
+        # The container has no display; QApplication needs a platform even for --version.
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: test "$(./build/pegel --version)" = "pegel ${GITHUB_REF_NAME#v}"
+      - name: Paket
+        run: |
+          cd build
+          cpack -G DEB
+          version=$(. /etc/os-release && echo "$VERSION_ID")
+          for deb in *.deb; do mv "$deb" "${deb%_amd64.deb}_ubuntu${version}_amd64.deb"; done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pegel-ubuntu-${{ matrix.ubuntu }}
+          path: build/*.deb
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.deb --repo "$GITHUB_REPOSITORY" --title "Pegel ${GITHUB_REF_NAME#v}" --generate-notes

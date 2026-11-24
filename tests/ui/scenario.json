@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 6,
+  "generatedAt": "@+0",
+  "providers": [
+    {
+      "provider": "claude",
+      "label": "Claude",
+      "plan": "pro",
+      "windows": [
+        {
+          "id": "five_hour",
+          "label": "session",
+          "kind": "session",
+          "percentUsed": 82,
+          "resetsAt": "@+1080",
+          "windowSeconds": 18000
+        },
+        {
+          "id": "seven_day",
+          "label": "week",
+          "kind": "weekly",
+          "percentUsed": 64,
+          "resetsAt": "@+63000",
+          "windowSeconds": 604800
+        },
+        {
+          "id": "model:fable",
+          "label": "Fable week",
+          "kind": "model",
+          "percentUsed": 96,
+          "resetsAt": "@+63000",
+          "windowSeconds": 604800,
+          "pace": {
+            "projectedExhaustedAt": "@+22000",
+            "projectionConfidence": "established"
+          }
+        }
+      ],
+      "state": {
+        "status": "fresh",
+        "stale": false,
+        "refreshedAt": "@-1"
+      },
+      "accountKey": "profile:aaa",
+      "accountLocator": {
+        "kind": "config-dir",
+        "path": "<HOME>/.claude"
+      },
+      "quotaSemantics": {
+        "status": "known",
+        "effectiveAvailability": [
+          {
+            "scope": "all_models",
+            "status": "known",
+            "effectivePercentRemaining": 18,
+            "runway": {
+              "status": "through_reset",
+              "limitingWindowId": "five_hour"
+            }
+          }
+        ]
+      },
+      "account": {
+        "email": "a@example.com",
+        "organization": "Example Org"
+      }
+    },
+    {
+      "provider": "claude",
+      "label": "Claude",
+      "plan": "team",
+      "windows": [
+        {
+          "id": "five_hour",
+          "label": "session",
+          "kind": "session",
+          "percentUsed": 100,
+          "resetsAt": "@+4800",
+          "windowSeconds": 18000
+        },
+        {
+          "id": "seven_day",
+          "label": "week",
+          "kind": "weekly",
+          "percentUsed": 45,
+          "resetsAt": "@+63000",
+          "windowSeconds": 604800
+        }
+      ],
+      "state": {
+        "status": "fresh",
+        "stale": false,
+        "refreshedAt": "@-1"
+      },
+      "accountKey": "profile:bbb",
+      "accountLocator": {
+        "kind": "config-dir",
+        "path": "<HOME>/.claude-work"
+      },
+      "quotaSemantics": {
+        "status": "known",
+        "effectiveAvailability": [
+          {
+            "scope": "all_models",
+            "status": "known",
+            "effectivePercentRemaining": 0,
+            "runway": {
+              "status": "exhausted_now",
+              "limitingWindowId": "five_hour"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "provider": "codex",
+      "label": "Codex",
+      "plan": "plus",
+      "windows": [
+        {
+          "id": "five_hour",
+          "label": "session",
+          "kind": "session",
+          "percentUsed": 0,
+          "resetsAt": "@+4800",
+          "windowSeconds": 18000
+        },
+        {
+          "id": "weekly",
+          "label": "week",
+          "kind": "weekly",
+          "percentUsed": 44,
+          "resetsAt": "@+63000",
+          "windowSeconds": 604800
+        }
+      ],
+      "state": {
+        "status": "fresh",
+        "stale": false,
+        "refreshedAt": "@-1"
+      },
+      "credits": {
+        "remaining": 0,
+        "unlimited": false,
+        "unit": "credits"
+      }
+    },
+    {
+      "provider": "agy",
+      "label": "Antigravity",
+      "windows": [
+        {
+          "id": "gemini_weekly",
+          "label": "Gemini week",
+          "kind": "weekly",
+          "percentUsed": 0,
+          "resetsAt": "1970-01-01T00:00:00.000Z",
+          "windowSeconds": 604800
+        }
+      ],
+      "state": {
+        "status": "stale",
+        "stale": true,
+        "refreshedAt": "@-10800"
+      }
+    },
+    {
+      "provider": "opencode-go",
+      "label": "OpenCode Go",
+      "windows": [
+        {
+          "id": "rolling",
+          "label": "Rolling",
+          "kind": "unknown",
+          "percentUsed": 4,
+          "resetsAt": "@+1080",
+          "windowSeconds": 18000
+        },
+        {
+          "id": "weekly",
+          "label": "Weekly",
+          "kind": "weekly",
+          "percentUsed": 12,
+          "resetsAt": "@+63000",
+          "windowSeconds": 604800
+        },
+        {
+          "id": "monthly",
+          "label": "Monthly",
+          "kind": "monthly",
+          "percentUsed": 6,
+          "resetsAt": "@+2392000",
+          "startsAt": "@-200000"
+        }
+      ],
+      "state": {
+        "status": "fresh",
+        "stale": false,
+        "refreshedAt": "@-1"
+      }
+    },
+    {
+      "provider": "openrouter",
+      "label": "OpenRouter",
+      "windows": [
+        {
+          "id": "credits",
+          "label": "Credits",
+          "kind": "credits",
+          "spentUsd": 12.4,
+          "limitUsd": 50
+        }
+      ],
+      "state": {
+        "status": "fresh",
+        "stale": false,
+        "refreshedAt": "@-1"
+      }
+    },
+    {
+      "provider": "grok",
+      "label": "Grok",
+      "windows": [],
+      "state": {
+        "status": "unavailable",
+        "stale": false,
+        "reason": "credentials_expired",
+        "remedyCommand": "grok"
+      }
+    },
+    {
+      "provider": "cursor",
+      "label": "Cursor",
+      "windows": [],
+      "state": {
+        "status": "auth_required",
+        "stale": false
+      },
+      "notSetUp": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Pegel
+GenericName=AI Coding Quota
+GenericName[de]=KI-Kontingente
+Comment=Check the usage and reset times of your AI coding accounts
+Comment[de]=Verbrauch und Reset-Zeiten der KI-Coding-Konten ansehen
+Exec=pegel
+Icon=io.github.bdgraue.Pegel
+Terminal=false
+Categories=Utility;Qt;KDE;
+Keywords=AI;quota;usage;Claude;Codex;
+Keywords[de]=KI;Kontingent;Verbrauch;Claude;Codex;
+StartupNotify=false
