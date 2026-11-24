@@ -50,7 +50,10 @@ TestCase {
         compare(fixture.calls().length, 1)
         compare(fixture.calls()[0].env.QUOTA_AXI_CLAUDE_PROFILES, fixture.path("home/.claude") + ":" + fixture.path("home/.claude-work"))
         verify(!("CLAUDE_CONFIG_DIR" in fixture.calls()[0].env))
-        verify(named("list").contentHeight > named("list").height)
+        // The lanes are laid out when the window is polished, which may come after the report has loaded.
+        const list = named("list")
+        for (let i = 0; i < 50 && !(list.contentHeight > list.height); i++) wait(100)
+        verify(list.contentHeight > list.height, `content ${list.contentHeight}, viewport ${list.height}, window ${win.height}`)
         const tray = named("tray")
         compare(tray.fill, 1)
         compare(tray.warning, true)
