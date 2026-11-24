@@ -1,0 +1,7 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Pegel contributors
+[ "$1" = "-lic" ] || exit 2
+export QUOTA_AXI_MAX_AGE=2d CLAUDE_CONFIG_DIR=/wrong QUOTA_AXI_CLAUDE_PROFILES=/wrong
+echo 'login banner'
+/bin/sh -c "$2"

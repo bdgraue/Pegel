@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<component type="desktop-application">
+  <id>io.github.bdgraue.Pegel</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Pegel</name>
+  <summary>Monitor usage limits for your AI coding accounts</summary>
+  <summary xml:lang="de">Verbrauch und Limits der KI-Coding-Konten anzeigen</summary>
+  <description>
+    <p>Pegel displays the usage windows reported by quota-axi for each coding account. Open it from the system tray to check how much quota is left, when a limit resets and which readings are out of date.</p>
+    <p xml:lang="de">Pegel zeigt die von quota-axi gemeldeten Kontingente für jedes Coding-Konto. Ein Klick auf das Tray-Symbol zeigt den Verbrauch, die Reset-Zeiten und das Alter der Messwerte.</p>
+  </description>
+  <launchable type="desktop-id">io.github.bdgraue.Pegel.desktop</launchable>
+  <url type="homepage">https://github.com/bdgraue/Pegel</url>
+  <url type="bugtracker">https://github.com/bdgraue/Pegel/issues</url>
+  <developer id="io.github.bdgraue"><name>Pegel contributors</name></developer>
+  <content_rating type="oars-1.1"/>
+  <releases><release version="0.1.0" date="2026-11-24"/></releases>
+</component>

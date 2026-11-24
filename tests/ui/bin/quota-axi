@@ -1,0 +1,22 @@
+#!/usr/bin/node
+// SPDX-License-Identifier: GPL-3.0-or-later
+const fs = require("node:fs");
+const path = require("node:path");
+const dir = process.env.PEGEL_FAKE_DIR;
+const env = {};
+for (const name of Object.keys(process.env)) {
+    if (/^(?:QUOTA_AXI_|CLAUDE_CONFIG_DIR$|CLAUDE_CODE_OAUTH_TOKEN$|ANTHROPIC_API_KEY$|ANTHROPIC_AUTH_TOKEN$)/.test(name)) {
+        env[name] = process.env[name];
+    }
+}
+fs.appendFileSync(path.join(dir, "calls.log"), JSON.stringify({args: process.argv.slice(2), env}) + "\n");
+setTimeout(() => {
+    const failure = path.join(dir, "fail.json");
+    if (fs.existsSync(failure)) {
+        const {code, stderr} = JSON.parse(fs.readFileSync(failure, "utf8"));
+        process.stderr.write(stderr + "\n");
+        process.exitCode = code;
+        return;
+    }
+    process.stdout.write(fs.readFileSync(path.join(dir, "response.json")));
+}, Number(fs.readFileSync(path.join(dir, "delay"), "utf8")));
