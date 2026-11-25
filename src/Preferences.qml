@@ -92,7 +92,9 @@ Kirigami.Dialog {
     standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
     y: Kirigami.Units.largeSpacing
     preferredWidth: Kirigami.Units.gridUnit * 26
-    padding: Kirigami.Units.largeSpacing
+    // The content carries the margin itself: padding of the dialog lies outside the scroll view, so a scroll bar
+    // would touch the content.
+    padding: 0
     onAccepted: {
         const hidden = parsed.hidden.value.slice()
         const names = Object.assign({}, parsed.names.value)
@@ -128,117 +130,120 @@ Kirigami.Dialog {
             readRequested()
     }
 
-    ColumnLayout {
-        spacing: Kirigami.Units.smallSpacing
-        Controls.Label { text: qsTr("Read every") }
-        RowLayout {
-            Controls.SpinBox { id: interval; objectName: "intervalField"; from: 1; to: 60; editable: true }
-            Controls.Label { text: qsTr("minutes") }
-        }
-        RowLayout {
-            Controls.CheckBox { id: notify; objectName: "notifyBox"; text: qsTr("Notify at") }
-            Controls.SpinBox { id: threshold; objectName: "thresholdField"; from: 50; to: 99; editable: true; enabled: notify.checked }
-            Controls.Label { text: "%" }
-        }
-        Kirigami.Heading {
-            Layout.fillWidth: true
-            level: 4
-            wrapMode: Text.Wrap
-            text: qsTr("Count for the tray icon and notifications")
-        }
-        Repeater {
-            id: kinds
-            model: Object.keys(dialog.kindLabels)
-            Controls.CheckBox {
-                required property string modelData
-                objectName: "kind:" + modelData
-                text: dialog.kindLabels[modelData]
-            }
-        }
-        Kirigami.Heading { level: 4; text: qsTr("Accounts") }
-        Repeater {
-            id: accountRows
-            model: dialog.accounts
-            ColumnLayout {
-                id: account
-                required property var modelData
-                property alias checked: shown.checked
-                property alias name: nameField.text
-                Layout.fillWidth: true
-                spacing: 0
-                Controls.CheckBox {
-                    id: shown
-                    objectName: "laneVisible:" + account.modelData.key
-                    text: dialog.defaultNames[account.modelData.key] ?? account.modelData.label
-                }
-                Controls.TextField {
-                    id: nameField
-                    Layout.fillWidth: true
-                    objectName: "laneNameField:" + account.modelData.key
-                    placeholderText: dialog.defaultNames[account.modelData.key] ?? account.modelData.label
-                }
-            }
-        }
-        Kirigami.Heading { level: 4; text: qsTr("Claude profile folders") }
-        Repeater {
-            id: folderRows
-            model: dialog.folders
+    Controls.Control {
+        padding: Kirigami.Units.largeSpacing
+        contentItem: ColumnLayout {
+            spacing: Kirigami.Units.smallSpacing
+            Controls.Label { text: qsTr("Read every") }
             RowLayout {
-                id: folder
-                required property string modelData
-                property alias checked: folderCheck.checked
+                Controls.SpinBox { id: interval; objectName: "intervalField"; from: 1; to: 60; editable: true }
+                Controls.Label { text: qsTr("minutes") }
+            }
+            RowLayout {
+                Controls.CheckBox { id: notify; objectName: "notifyBox"; text: qsTr("Notify at") }
+                Controls.SpinBox { id: threshold; objectName: "thresholdField"; from: 50; to: 99; editable: true; enabled: notify.checked }
+                Controls.Label { text: "%" }
+            }
+            Kirigami.Heading {
                 Layout.fillWidth: true
+                level: 4
+                wrapMode: Text.Wrap
+                text: qsTr("Count for the tray icon and notifications")
+            }
+            Repeater {
+                id: kinds
+                model: Object.keys(dialog.kindLabels)
                 Controls.CheckBox {
-                    id: folderCheck
-                    objectName: "profile:" + folder.modelData
-                    Accessible.name: folder.modelData
-                    checked: !dialog.disabled.includes(folder.modelData)
+                    required property string modelData
+                    objectName: "kind:" + modelData
+                    text: dialog.kindLabels[modelData]
                 }
-                Controls.Label {
+            }
+            Kirigami.Heading { level: 4; text: qsTr("Claude profile folders") }
+            Repeater {
+                id: folderRows
+                model: dialog.folders
+                RowLayout {
+                    id: folder
+                    required property string modelData
+                    property alias checked: folderCheck.checked
                     Layout.fillWidth: true
-                    wrapMode: Text.WrapAnywhere
-                    text: folder.modelData
-                    TapHandler { onTapped: folderCheck.toggle() }
+                    Controls.CheckBox {
+                        id: folderCheck
+                        objectName: "profile:" + folder.modelData
+                        Accessible.name: folder.modelData
+                        checked: !dialog.disabled.includes(folder.modelData)
+                    }
+                    Controls.Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WrapAnywhere
+                        text: folder.modelData
+                        TapHandler { onTapped: folderCheck.toggle() }
+                    }
                 }
             }
-        }
-        RowLayout {
-            Layout.fillWidth: true
-            Controls.TextField { id: addField; objectName: "profileAddField"; Layout.fillWidth: true; onAccepted: dialog.addFolder() }
-            Controls.ToolButton {
-                objectName: "profileAddButton"
-                text: qsTr("Add folder")
-                icon.name: "list-add"
-                display: Controls.AbstractButton.IconOnly
-                onClicked: dialog.addFolder()
+            RowLayout {
+                Layout.fillWidth: true
+                Controls.TextField { id: addField; objectName: "profileAddField"; Layout.fillWidth: true; onAccepted: dialog.addFolder() }
+                Controls.ToolButton {
+                    objectName: "profileAddButton"
+                    text: qsTr("Add folder")
+                    icon.name: "list-add"
+                    display: Controls.AbstractButton.IconOnly
+                    onClicked: dialog.addFolder()
+                }
             }
-        }
-        Controls.Label {
-            objectName: "profileError"
-            visible: text.length > 0
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            text: dialog.profileError
-            color: Kirigami.Theme.negativeTextColor
-        }
-        RowLayout {
-            Layout.fillWidth: true
-            Controls.CheckBox { id: showNotSetUp; objectName: "showNotSetUpBox"; Accessible.name: showLabel.text }
             Controls.Label {
-                id: showLabel
+                objectName: "profileError"
+                visible: text.length > 0
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-                text: qsTr("Show providers that are not set up (%1)").arg(dialog.report ? Model.notSetUpCount(dialog.report) : 0)
-                TapHandler { onTapped: showNotSetUp.toggle() }
+                text: dialog.profileError
+                color: Kirigami.Theme.negativeTextColor
+            }
+            Controls.Label { text: qsTr("Path to quota-axi") }
+            Controls.TextField {
+                id: pathField
+                objectName: "quotaPathField"
+                Layout.fillWidth: true
+                placeholderText: qsTr("found automatically")
+            }
+            Controls.CheckBox { id: autostart; objectName: "autostartBox"; text: qsTr("Start with the session") }
+            Kirigami.Heading { level: 4; text: qsTr("Accounts") }
+            RowLayout {
+                Layout.fillWidth: true
+                Controls.CheckBox { id: showNotSetUp; objectName: "showNotSetUpBox"; Accessible.name: showLabel.text }
+                Controls.Label {
+                    id: showLabel
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: qsTr("Show providers that are not set up (%1)").arg(dialog.report ? Model.notSetUpCount(dialog.report) : 0)
+                    TapHandler { onTapped: showNotSetUp.toggle() }
+                }
+            }
+            Repeater {
+                id: accountRows
+                model: dialog.accounts
+                ColumnLayout {
+                    id: account
+                    required property var modelData
+                    property alias checked: shown.checked
+                    property alias name: nameField.text
+                    Layout.fillWidth: true
+                    spacing: 0
+                    Controls.CheckBox {
+                        id: shown
+                        objectName: "laneVisible:" + account.modelData.key
+                        text: dialog.defaultNames[account.modelData.key] ?? account.modelData.label
+                    }
+                    Controls.TextField {
+                        id: nameField
+                        Layout.fillWidth: true
+                        objectName: "laneNameField:" + account.modelData.key
+                        placeholderText: dialog.defaultNames[account.modelData.key] ?? account.modelData.label
+                    }
+                }
             }
         }
-        Controls.Label { text: qsTr("Path to quota-axi") }
-        Controls.TextField {
-            id: pathField
-            objectName: "quotaPathField"
-            Layout.fillWidth: true
-            placeholderText: qsTr("found automatically")
-        }
-        Controls.CheckBox { id: autostart; objectName: "autostartBox"; text: qsTr("Start with the session") }
     }
 }

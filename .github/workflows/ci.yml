@@ -21,7 +21,7 @@ jobs:
       matrix:
         ubuntu: ["26.04", "26.10"]
     steps:
-      - name: Abhängigkeiten
+      - name: Dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
@@ -38,16 +38,16 @@ jobs:
       - uses: actions/checkout@v7
       - name: Tests
         run: node --test tests/*.test.mjs
-      - name: Metadaten prüfen
+      - name: Validate metadata
         run: |
           desktop-file-validate data/io.github.bdgraue.Pegel.desktop
           appstreamcli validate --no-net data/io.github.bdgraue.Pegel.metainfo.xml
-      - name: Bauen
+      - name: Build
         run: |
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -Wno-dev
           cmake --build build
-      - name: UI-Tests
-        # Offscreen, auf einem eigenen D-Bus und gegen ein nachgebautes quota-axi (tests/ui/bin/quota-axi).
+      - name: UI tests
+        # Offscreen, on a D-Bus session of its own and against a fake quota-axi (tests/ui/bin/quota-axi).
         run: ctest --test-dir build --output-on-failure
       - uses: actions/upload-artifact@v7
         if: always()
@@ -55,13 +55,13 @@ jobs:
           name: screenshots-ubuntu-${{ matrix.ubuntu }}
           path: build/tests/ui/artifacts/*.png
           if-no-files-found: ignore
-      - name: Tag passt zur Version
+      - name: Tag matches the version
         if: startsWith(github.ref, 'refs/tags/v')
         # The container has no display; QApplication needs a platform even for --version.
         env:
           QT_QPA_PLATFORM: offscreen
         run: test "$(./build/pegel --version)" = "pegel ${GITHUB_REF_NAME#v}"
-      - name: Paket
+      - name: Package
         run: |
           cd build
           cpack -G DEB
@@ -83,7 +83,7 @@ jobs:
         with:
           path: dist
           merge-multiple: true
-      - name: Release anlegen
+      - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" dist/*.deb --repo "$GITHUB_REPOSITORY" --title "Pegel ${GITHUB_REF_NAME#v}" --generate-notes

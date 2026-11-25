@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     auto *window = qobject_cast<QWindow *>(engine.rootObjects().constFirst());
     if (!window) {
-        qFatal("Main.qml ist kein Fenster.");
+        qFatal("Main.qml is not a window.");
     }
     QObject::connect(&service, &KDBusService::activateRequested, window, [window] {
         window->show();

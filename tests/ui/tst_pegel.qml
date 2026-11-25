@@ -113,6 +113,21 @@ TestCase {
         p.reject()
         compare(named("laneName:claude/profile:bbb").text, "Claude · Arbeit")
     }
+    function test_preferences_layout() {
+        open()
+        const view = prefs().contentItem
+        const field = named("quotaPathField")
+        // The scroll view makes room for its scroll bar with this padding; the scenario has enough accounts to need one.
+        tryVerify(() => view.rightPadding > 0)
+        const left = field.mapToItem(view, 0, 0).x - view.leftPadding
+        const right = view.width - view.rightPadding - field.mapToItem(view, field.width, 0).x
+        verify(left > 0, `left ${left}`)
+        compare(right, left)
+        const top = name => named(name).mapToItem(view, 0, 0).y
+        const firstAccount = top("laneVisible:claude/profile:aaa")
+        for (const name of ["profileAddField", "quotaPathField", "autostartBox", "showNotSetUpBox"])
+            verify(top(name) < firstAccount, name + " is below the accounts")
+    }
     function test_profiles() {
         open()
         const p = prefs()
