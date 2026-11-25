@@ -36,6 +36,8 @@ ctest --test-dir build --output-on-failure
 (cd build && cpack -G DEB)
 ```
 
+GitHub builds no packages on its own. The [Package workflow](.github/workflows/package.yml) builds the `.deb` for Ubuntu 26.04 and 26.10 when it is started by hand, in the Actions tab or with `gh workflow run package.yml --ref <branch or tag>`. The packages are then attached to that run as artifacts.
+
 The UI tests use invented accounts, a temporary home directory and a D-Bus session of their own. The screenshots are then in `build/tests/ui/artifacts/`. `cmake --build build --target update_translations` updates the text catalogue for the German translation.
 
 The presentation follows the herdr mod **quota** by Lakris2407 (MIT). The KDE integration follows [Hafen](https://github.com/bdgraue/Hafen). The quota data comes from quota-axi.

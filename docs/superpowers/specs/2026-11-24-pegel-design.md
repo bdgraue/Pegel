@@ -324,8 +324,9 @@ changelog and all other documents are English, as in Hafen.
   cycle, profile search, error cases when reading.
 - UI tests as in Hafen: the real `Main.qml` against a fake `quota-axi`
   in the test folder, without a screen and on its own D-Bus.
-- CI as in Hafen: tests, check metadata, build, `.deb` for both
-  Ubuntu versions, release on tag.
+- CI: tests, check metadata, build. The `.deb` for both Ubuntu versions
+  comes from a separate workflow that is started by hand; nothing is
+  packaged or released automatically.
 
 ## Acceptance
 
