@@ -1,351 +1,352 @@
-# Pegel: Entwurf
+# Pegel: Design
 
-Stand: 2026-11-24. Status: freigegeben.
+As of: 2026-11-24. Status: approved.
 
-## Absicht
+## Intent
 
-Pegel ist ein kleines KDE-Programm mit Tray-Icon. Ein Klick auf das Icon zeigt
-die Kontingente aller KI-Coding-Konten des Benutzers: wie viel jedes
-Limit-Fenster verbraucht hat, wann es zurückgesetzt wird und ob der Verbrauch
-schneller läuft als die Zeit.
+Pegel is a small KDE program with a tray icon. A click on the icon shows the
+quota of all AI coding accounts of the user: how much each limit window has
+used, when it resets and whether usage is running faster than time.
 
-Der Anlass: Ein früheres Plasma-Widget zeigte die Zahlen dauerhaft im Panel und
-sammelte die Daten selbst. Die Darstellung einer Statusleisten-Erweiterung für
-herdr gefiel besser, sie ist aber an herdr gebunden. Pegel übernimmt deren
-Darstellung in ein eigenständiges Programm nach dem Muster von
+The occasion: an earlier Plasma widget showed the numbers permanently in the
+panel and collected the data itself. The presentation of a status bar extension
+for herdr was liked better, but it is tied to herdr. Pegel takes over its
+presentation into a standalone program following the pattern of
 [Hafen](https://github.com/bdgraue/Hafen).
 
-## Kenndaten
+## Key data
 
 | | |
 |---|---|
 | Name | Pegel |
-| Programm | `pegel` |
-| App-ID | `io.github.bdgraue.Pegel` |
-| QML-Modul | `Pegel` |
-| Einstellungen | `~/.config/pegel/pegel.conf` |
-| Erste Version | 0.1.0 |
-| Vorlage | Hafen, Zweig `feature/ui-tests` (Stand 0.3.1 mit UI-Tests) |
+| Program | `pegel` |
+| App ID | `io.github.bdgraue.Pegel` |
+| QML module | `Pegel` |
+| Settings | `~/.config/pegel/pegel.conf` |
+| First version | 0.1.0 |
+| Template | Hafen, branch `feature/ui-tests` (state 0.3.1 with UI tests) |
 
-## Ziele
+## Goals
 
-1. Das Tray-Icon zeigt den Zustand ohne Zahlen. Ein Klick öffnet das Fenster,
-   ein zweiter schließt es.
-2. Das Fenster zeigt je Konto alle Limit-Fenster mit Balken, Prozentwert,
-   Zeitmarke, Zeit bis zum Reset und Tempo.
-3. Mehrere Konten desselben Anbieters, vor allem mehrere Claude-Abos, stehen als
-   getrennte Einträge mit eigenem Namen da.
-4. Fehlende, alte und unsichere Werte sind als solche erkennbar.
-5. Es gibt ein `.deb` für Ubuntu 26.04 und 26.10, gebaut wie bei Hafen.
+1. The tray icon shows the state without numbers. One click opens the window,
+   a second one closes it.
+2. The window shows, per account, all limit windows with bar, percentage,
+   time marker, time until the reset and pace.
+3. Several accounts of the same provider, above all several Claude
+   subscriptions, appear as separate entries with their own name.
+4. Missing, old and uncertain values are recognizable as such.
+5. There is a `.deb` for Ubuntu 26.04 and 26.10, built as in Hafen.
 
-## Nicht-Ziele
+## Non-goals
 
-- Pegel sammelt keine Daten selbst. Es ruft keine Anbieter-API auf und liest
-  keine Zugangsdaten. Alle Zahlen kommen von `quota-axi`.
-- Keine Zahlen im Panel und kein Plasma-Widget.
-- Keine Anmeldung bei Anbietern. Pegel zeigt höchstens den Befehl, den
-  `quota-axi` zur Behebung nennt, und führt ihn nicht aus.
-- Kein Verlauf und keine Diagramme.
-- Keine Empfehlung, welches Konto oder Modell als Nächstes zu nutzen ist.
-- Keine Unterstützung für `claude-swap` (`QUOTA_AXI_CLAUDE_SWAP`) in 0.1.
-- Pegel installiert `quota-axi` nicht.
-- Keine Update-Prüfung gegen GitHub in 0.1.
+- Pegel does not collect data itself. It calls no provider API and reads no
+  credentials. All numbers come from `quota-axi`.
+- No numbers in the panel and no Plasma widget.
+- No sign-in with providers. At most, Pegel shows the command that `quota-axi`
+  names as the remedy, and does not run it.
+- No history and no charts.
+- No recommendation which account or model to use next.
+- No support for `claude-swap` (`QUOTA_AXI_CLAUDE_SWAP`) in 0.1.
+- Pegel does not install `quota-axi`.
+- No update check against GitHub in 0.1.
 
-## Was nicht passieren darf
+## What must not happen
 
-- Ein Fenster ohne echten Prozentwert erscheint als „0 %“.
-- Zwei Konten desselben Anbieters verschmelzen oder sind nicht zu unterscheiden.
-- Ein alter Stand sieht aus wie ein frischer.
-- Pegel löst eine Schlüsselbund-Abfrage aus oder verbraucht Kontingent. Die
-  Schalter `--allow-keychain-prompt` und `--allow-claude-inference` werden nie
-  übergeben.
-- Echte Kontodaten landen im öffentlichen Repository (siehe unten).
+- A window without a real percentage appears as "0 %".
+- Two accounts of the same provider merge or cannot be told apart.
+- An old reading looks like a fresh one.
+- Pegel triggers a keychain prompt or consumes quota. The flags
+  `--allow-keychain-prompt` and `--allow-claude-inference` are never
+  passed.
+- Real account data ends up in the public repository (see below).
 
-## Rahmenbedingungen
+## Constraints
 
-### Öffentliches Repository
+### Public repository
 
-Das Repository ist öffentlich. Daraus folgt:
+The repository is public. It follows that:
 
-- Testdaten, Screenshots, Dokumente und Commit-Texte enthalten keine echten
-  E-Mail-Adressen, Organisationsnamen, Konto-IDs oder Home-Pfade. Die
-  Test-Szenarien sind erfundene `quota-axi`-Antworten mit `example.com`.
-- Einstellungen mit Kontonamen und Pfaden liegen in `~/.config/pegel/` und sind
-  per `.gitignore` ausgeschlossen, wie bei Hafen.
-- Das Repository enthält keine Anbieter-Logos. Ein Anbieter erscheint als
-  farbiges Kürzel. Wer Logos will, legt `<anbieter>.svg` nach
-  `~/.local/share/pegel/icons/`; Pegel nimmt eine dort vorhandene Datei.
-- Lizenz: GPL-3.0-or-later, wie Hafen.
-- Die Darstellung lehnt sich an die herdr-Mod „quota“ an (MIT, Copyright
-  Lakris2407). Pegel schreibt die Logik neu; das README nennt die Vorlage.
+- Test data, screenshots, documents and commit messages contain no real
+  email addresses, organization names, account IDs or home paths. The
+  test scenarios are invented `quota-axi` responses with `example.com`.
+- Settings with account names and paths live in `~/.config/pegel/` and are
+  excluded via `.gitignore`, as in Hafen.
+- The repository contains no provider logos. A provider appears as a
+  colored abbreviation. Anyone who wants logos puts `<provider>.svg` into
+  `~/.local/share/pegel/icons/`; Pegel uses a file that exists there.
+- License: GPL-3.0-or-later, like Hafen.
+- The presentation is modeled on the herdr mod "quota" (MIT, Copyright
+  Lakris2407). Pegel rewrites the logic; the README names the original.
 
-### Datenquelle
+### Data source
 
-`quota-axi` (MIT, npm-Paket `quota-axi`, braucht Node ≥ 22.19) liefert mit
-`quota-axi --json --full` ein JSON-Objekt mit `schemaVersion` 5 oder 6 und einer
-Liste `providers`. Gemessen an Version 0.1.69:
+`quota-axi` (MIT, npm package `quota-axi`, needs Node ≥ 22.19) returns, with
+`quota-axi --json --full`, a JSON object with `schemaVersion` 5 or 6 and a
+list `providers`. Measured with version 0.1.69:
 
-- Ein Lesevorgang dauert rund 3 Sekunden und fragt jedes Mal die Anbieter.
-- Jede Zeile hat `provider`, `label`, `plan`, `windows`, `state` und
-  `accountKeys`. Mit mehreren Konten kommen `accountKey` und `accountLocator`
-  dazu.
-- `state.status` ist `fresh`, `stale`, `unavailable`, `auth_required`,
-  `rate_limited` oder `error`. Dazu kommen bei Bedarf `error`, `reason`,
-  `remedyCommand`, `retryAfter`, `refreshedAt` und `untrustedWindowIds`.
-- Nicht eingerichtete Anbieter tragen `notSetUp: true`.
-- Ein Fenster hat `id`, `label` und `kind` (`session`, `weekly`, `monthly`,
+- A read takes about 3 seconds and queries the providers every time.
+- Each row has `provider`, `label`, `plan`, `windows`, `state` and
+  `accountKeys`. With several accounts, `accountKey` and `accountLocator` are
+  added.
+- `state.status` is `fresh`, `stale`, `unavailable`, `auth_required`,
+  `rate_limited` or `error`. Where needed, `error`, `reason`, `remedyCommand`,
+  `retryAfter`, `refreshedAt` and `untrustedWindowIds` are added.
+- Providers that are not set up carry `notSetUp: true`.
+- A window has `id`, `label` and `kind` (`session`, `weekly`, `monthly`,
   `model`, `credits`, `unknown`). `percentUsed`, `resetsAt`, `startsAt`,
-  `windowSeconds`, `shareOf`, `pace` und Geld- oder Credit-Beträge sind
+  `windowSeconds`, `shareOf`, `pace` and money or credit amounts are
   optional.
-- `quotaSemantics.effectiveAvailability` nennt je Geltungsbereich (`scope`) den
-  effektiven Rest und unter `runway`, ob das Kontingent bis zum Reset reicht.
+- `quotaSemantics.effectiveAvailability` names, for each scope (`scope`), the
+  effective remainder and, under `runway`, whether the quota lasts until the
+  reset.
 
-### Technik
+### Technology
 
-Qt ≥ 6.5 mit Kirigami, KF6 StatusNotifierItem und KF6 DBusAddons, CMake, C++20.
-Das entspricht Hafen. Die Logik liegt in `src/model.mjs` und läuft in Qts
-JavaScript-Engine und unter Node. Qts Engine kennt weder Objekt-Spread noch
-`Array.prototype.flatMap`, darum laufen dieselben Testfälle in beiden.
+Qt ≥ 6.5 with Kirigami, KF6 StatusNotifierItem and KF6 DBusAddons, CMake, C++20.
+This matches Hafen. The logic lives in `src/model.mjs` and runs in Qt's
+JavaScript engine and under Node. Qt's engine knows neither object spread nor
+`Array.prototype.flatMap`, which is why the same test cases run in both.
 
-## Wege
+## Approaches
 
-**A. Eigenständige App mit Tray-Icon (gewählt).** Bauweise wie Hafen. Die App
-liest im Hintergrund, kann benachrichtigen, läuft auf jedem Desktop mit Tray und
-übernimmt Build, Tray-Klasse, Paketierung und Testaufbau von Hafen. Das Fenster
-platziert der Fenstermanager, es hängt nicht am Icon. Die App braucht einen
-Autostart.
+**A. Standalone app with tray icon (chosen).** Built like Hafen. The app
+reads in the background, can notify, runs on any desktop with a tray and
+takes over build, tray class, packaging and test setup from Hafen. The window
+is placed by the window manager; it is not attached to the icon. The app needs
+an autostart.
 
-**B. Plasma-Widget nur mit Icon.** Das Popup säße direkt am Panel, und es gäbe
-keinen eigenen Prozess. Dafür liefe es nur unter Plasma, ließe sich schwerer
-testen und könnte von Hafen fast nichts übernehmen.
+**B. Plasma widget with icon only.** The popup would sit directly at the panel,
+and there would be no separate process. In return it would run only under
+Plasma, would be harder to test and could take over almost nothing from Hafen.
 
-Gewählt wurde A: Gewünscht war eine App wie Hafen, und der einzige Vorteil von B
-ist das verankerte Popup.
+A was chosen: an app like Hafen was wanted, and the only advantage of B is the
+anchored popup.
 
-**Verworfen: eigener Sammler.** Das alte Widget hatte einen Python-Helfer mit
-2.500 Zeilen für drei Anbieter. `quota-axi` deckt 19 Anbieter ab und kennt
-mehrere Claude-Profile.
+**Rejected: own collector.** The old widget had a Python helper with
+2,500 lines for three providers. `quota-axi` covers 19 providers and knows
+several Claude profiles.
 
-## Aufbau
+## Structure
 
 ```
-Tray-Icon ── Klick ──▶ Fenster (Main.qml)
-                          │  rendert
+Tray icon ── click ──▶ window (Main.qml)
+                          │  renders
                           ▼
-                    model.mjs: Zeilen ─▶ Einträge, Stufen, Texte, Meldungen
+                    model.mjs: rows ─▶ entries, levels, texts, notifications
                           ▲
                           │  JSON
-                    Quota (C++): startet quota-axi, findet Claude-Profile
+                    Quota (C++): starts quota-axi, finds Claude profiles
 ```
 
-- `src/quota.{h,cpp}`: startet `quota-axi` ohne zu blockieren und meldet
-  Exit-Code, Ausgabe und Fehlerausgabe zurück, nach dem Muster von
-  `Docker::run` in Hafen. Liefert außerdem die Rohdaten zur Profilsuche.
-- `src/tray.{h,cpp}`: Hafens `Tray` ohne das Projektmenü, dafür mit
-  gezeichnetem Icon.
-- `src/launcher.{h,cpp}`: Autostart wie bei Hafen.
-- `src/model.mjs`: alles Rechnen und Entscheiden, ohne Qt-Abhängigkeit.
-- `src/Main.qml`: Fenster und Einstellungen.
+- `src/quota.{h,cpp}`: starts `quota-axi` without blocking and reports exit
+  code, output and error output back, following the pattern of
+  `Docker::run` in Hafen. Also provides the raw data for the profile search.
+- `src/tray.{h,cpp}`: Hafen's `Tray` without the project menu, but with a
+  drawn icon.
+- `src/launcher.{h,cpp}`: autostart as in Hafen.
+- `src/model.mjs`: all calculating and deciding, without a Qt dependency.
+- `src/Main.qml`: window and settings.
 
-## Verhalten
+## Behavior
 
-### Einträge
+### Entries
 
-Ein Eintrag ist ein Konto bei einem Anbieter. Sein Schlüssel ist
-`<provider>/<accountKey>`; fehlt `accountKey`, gilt `default`. Unter diesem
-Schlüssel speichert Pegel Namen und Sichtbarkeit. Liefert `quota-axi` zwei
-Zeilen mit demselben Schlüssel, ist das ein Lesefehler.
+An entry is an account with a provider. Its key is
+`<provider>/<accountKey>`; if `accountKey` is missing, `default` applies. Under
+this key Pegel stores name and visibility. If `quota-axi` returns two rows
+with the same key, that is a read error.
 
-Reihenfolge wie von `quota-axi` geliefert. Angezeigt werden:
+Order as returned by `quota-axi`. Shown are:
 
-- Einträge mit Fenstern,
-- eingerichtete Einträge mit einem Problem (Anmeldung nötig, Sitzung
-  abgelaufen, Rate-Limit, Fehler), mit dem Grund im Klartext und, falls
-  vorhanden, dem `remedyCommand` zum Kopieren. Bei `rate_limited` mit
-  `retryAfter` steht dort „Rate-Limit bis 17:40“. Das Leseintervall ändert
-  Pegel deswegen nicht.
+- entries with windows,
+- set-up entries with a problem (sign-in required, session expired, rate
+  limit, error), with the reason in plain text and, if
+  present, the `remedyCommand` for copying. For `rate_limited` with
+  `retryAfter` it says "Rate limit until 17:40" there. Pegel does not change
+  the read interval because of this.
 
-Einträge mit `notSetUp` sind ausgeblendet. Die Einstellungen nennen ihre Anzahl
-und können sie einblenden.
+Entries with `notSetUp` are hidden. The settings state their number and can
+show them.
 
-Kopfzeile eines Eintrags: Kürzel oder Logo, Name, rechts der Tarif. Der Name
-ist das Anbieter-Label. Gibt es mehrere Einträge desselben Anbieters, hängt
-Pegel ein Unterscheidungsmerkmal an: den selbst vergebenen Namen, sonst die
-Endung des Profilordners (`~/.claude-work` wird „work“, `~/.claude` wird
-„Standard“). E-Mail und Organisation stehen nur im Tooltip.
+Header of an entry: abbreviation or logo, name, the plan on the right. The name
+is the provider label. If there are several entries of the same provider,
+Pegel appends a distinguishing mark: the user-assigned name, otherwise the
+suffix of the profile folder (`~/.claude-work` becomes "work", `~/.claude`
+becomes "Default"). Email and organization appear only in the tooltip.
 
-Darunter steht eine Zeile zum effektiven Rest, wenn `quota-axi` für den Bereich
-`all_models` einen bekannten Wert liefert:
+Below that is a line on the effective remainder if `quota-axi` returns a known
+value for the scope `all_models`:
 
 | `runway.status`        | Text                                             |
 |------------------------|--------------------------------------------------|
-| `through_reset`        | „noch 56 % · reicht bis zum Reset“               |
-| `projected_exhaustion` | „noch 18 % · leer gegen 22:37“                   |
-| `exhausted_now`        | „aufgebraucht · frei ab 17:40“                   |
-| `unknown` oder fehlt   | keine Zeile                                      |
+| `through_reset`        | "56 % left · lasts until the reset"              |
+| `projected_exhaustion` | "18 % left · empty around 22:37"                 |
+| `exhausted_now`        | "used up · free from 17:40"                      |
+| `unknown` or missing   | no line                                          |
 
-„Frei ab“ ist der Reset des Fensters `limitingWindowId`. „Leer gegen“ erscheint
-nur bei `projectionConfidence: established`; bei `early` steht nur der Rest.
+"Free from" is the reset of the window `limitingWindowId`. "Empty around"
+appears only with `projectionConfidence: established`; with `early` only the
+remainder is shown.
 
-### Fenster eines Eintrags
+### Windows of an entry
 
 ```
- 5 Stunden  ████████████████░░│░   82 %
-            Reset in 18 Min · 12 % unter Tempo
+ 5 hours    ████████████████░░│░   82 %
+            resets in 18 min · 12 % under pace
 ```
 
-- Beschriftung: „5 Stunden“ für `session`, „Woche“ für `weekly`, „Monat“ für
-  `monthly`, sonst das `label` des Fensters. Haben zwei Fenster eines Eintrags
-  dieselbe Art, gilt für beide das `label`.
-- Balken und Prozentwert zeigen `percentUsed`. Farbe nach Stufe: ruhig unter
-  60 %, dann ab 60 %, ab 80 % und ab 92 % je eine Warnstufe.
-- Die Zeitmarke zeigt, wie viel des Zyklus verstrichen ist. Zykluslänge ist
-  `windowSeconds`, sonst `resetsAt − startsAt`. Ohne Zykluslänge gibt es keine
-  Marke und keine Tempo-Angabe.
-- Tempo ist `percentUsed` minus verstrichener Anteil: unter 5 Punkten „im
-  Tempo“, sonst „x % über Tempo“ oder „x % unter Tempo“. In den ersten 3 % des
-  Zyklus entfällt die Angabe.
-- Fenster der Art `model` zeigen zusätzlich „leer gegen …“, wenn ihr eigenes
-  `pace.projectedExhaustedAt` vor dem Reset liegt und die Prognose
-  `established` ist.
+- Label: "5 hours" for `session`, "Week" for `weekly`, "Month" for
+  `monthly`, otherwise the `label` of the window. If two windows of an entry
+  have the same kind, the `label` applies to both.
+- Bar and percentage show `percentUsed`. Color by level: calm below
+  60 %, then one warning level each from 60 %, from 80 % and from 92 %.
+- The time marker shows how much of the cycle has elapsed. The cycle length is
+  `windowSeconds`, otherwise `resetsAt − startsAt`. Without a cycle length
+  there is no marker and no pace information.
+- Pace is `percentUsed` minus the elapsed share: below 5 points "on
+  pace", otherwise "x % over pace" or "x % under pace". In the first 3 % of
+  the cycle the information is omitted.
+- Windows of kind `model` additionally show "empty around …" if their own
+  `pace.projectedExhaustedAt` lies before the reset and the projection is
+  `established`.
 
-Sonderfälle:
+Special cases:
 
-| Fall | Darstellung |
+| Case | Presentation |
 |------|-------------|
-| `percentUsed` fehlt | kein Balken, „—“; Beträge als Text, etwa „12,40 von 50,00 $“ |
-| `shareOf` gesetzt | eingerückt als Anteil am Elternfenster, zählt nicht für Icon und Meldungen |
-| `resetsAt` liegt vor `refreshedAt` (etwa 1970) | keine Reset-Zeit, keine Marke |
-| `resetsAt` liegt zwischen `refreshedAt` und jetzt | Wert ausgegraut, „seit dem Reset kein neuer Stand“ |
-| Fenster in `untrustedWindowIds` | ausgegraut mit Hinweis, zählt nicht |
-| Status `stale` oder alter Stand | Eintrag ausgegraut, „Stand von vor 3 Std“ |
-| `credits` des Eintrags | Zeile „Guthaben: …“ nur bei Rest über 0 oder `unlimited` |
+| `percentUsed` missing | no bar, "—"; amounts as text, e.g. "12.40 of 50.00 $" |
+| `shareOf` set | indented as a share of the parent window, does not count for icon and notifications |
+| `resetsAt` is before `refreshedAt` (e.g. 1970) | no reset time, no marker |
+| `resetsAt` is between `refreshedAt` and now | value grayed out, "no new reading since the reset" |
+| window in `untrustedWindowIds` | grayed out with a note, does not count |
+| status `stale` or old reading | entry grayed out, "Reading from 3 h ago" |
+| `credits` of the entry | line "Credit: …" only with a remainder above 0 or `unlimited` |
 
-Ein Stand ist alt, wenn `refreshedAt` des Eintrags mehr als zwei
-Leseintervalle zurückliegt.
+A reading is old if the entry's `refreshedAt` lies more than two read
+intervals in the past.
 
-### Mehrere Claude-Konten
+### Several Claude accounts
 
-`quota-axi` meldet nur das Profil des aufrufenden Prozesses, solange
-`QUOTA_AXI_CLAUDE_PROFILES` nicht gesetzt ist, und sucht selbst nicht nach
-weiteren. Pegel übernimmt die Suche:
+`quota-axi` reports only the profile of the calling process as long as
+`QUOTA_AXI_CLAUDE_PROFILES` is not set, and does not search for others
+itself. Pegel takes over the search:
 
-- Kandidaten sind `~/.claude` und alle Ordner `~/.claude-*`, die eine Datei
-  `.credentials.json`, eine Datei `settings.json` oder einen Ordner `projects`
-  enthalten. Das ist die Regel des alten Widgets. Ein abgemeldetes Profil
-  bleibt so sichtbar, statt still zu verschwinden.
-- In den Einstellungen lassen sich Ordner ergänzen und gefundene abwählen.
-  Pfade werden aufgelöst, doppelte entfallen.
-- Pegel übergibt immer die ganze Liste einschließlich `~/.claude`, damit jeder
-  Eintrag einen stabilen `accountKey` hat, auch wenn es nur ein Profil gibt.
-- Die Zuordnung von Eintrag zu Ordner läuft über `accountLocator.path`.
+- Candidates are `~/.claude` and all folders `~/.claude-*` that contain a file
+  `.credentials.json`, a file `settings.json` or a folder `projects`. This
+  is the rule of the old widget. A signed-out profile thus stays
+  visible instead of silently disappearing.
+- In the settings, folders can be added and found ones deselected.
+  Paths are resolved, duplicates are dropped.
+- Pegel always passes the whole list including `~/.claude`, so that every
+  entry has a stable `accountKey`, even if there is only one profile.
+- The mapping from entry to folder goes through `accountLocator.path`.
 
-`quota-axi` wird mit bereinigter Umgebung gestartet: `CLAUDE_CONFIG_DIR`,
-`CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN` und alle
-`QUOTA_AXI_*` werden entfernt, bevor Pegel `QUOTA_AXI_CLAUDE_PROFILES` setzt.
-Das Ergebnis hängt so nicht davon ab, aus welchem Terminal Pegel gestartet
-wurde.
+`quota-axi` is started with a cleaned environment: `CLAUDE_CONFIG_DIR`,
+`CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN` and all
+`QUOTA_AXI_*` are removed before Pegel sets `QUOTA_AXI_CLAUDE_PROFILES`.
+The result thus does not depend on which terminal Pegel was started
+from.
 
-Eine Folge davon: Nur das Standardprofil darf `quota-axi` über `claude doctor`
-erneuern lassen. Läuft die Sitzung eines anderen Profils ab, meldet `quota-axi`
-`credentials_expired` mit einem `remedyCommand` für genau dieses Profil. Pegel
-zeigt den Eintrag dann als „Sitzung abgelaufen“ mit dem Befehl zum Kopieren.
-Die Alternative, je Profil ein eigener Aufruf mit `CLAUDE_CONFIG_DIR`, ließe
-jedes Profil erneuern, kostet aber einen Prozess je Profil und ließe ein
-Hintergrundprogramm Sitzungen anfassen, die gerade niemand nutzt.
+One consequence: `quota-axi` may have only the default profile renewed through
+`claude doctor`. If the session of another profile expires, `quota-axi` reports
+`credentials_expired` with a `remedyCommand` for exactly that profile. Pegel
+then shows the entry as "Session expired" with the command for copying.
+The alternative, a separate call per profile with `CLAUDE_CONFIG_DIR`, would
+let every profile be renewed, but costs one process per profile and would let a
+background program touch sessions that nobody is using at the moment.
 
-### Lesen
+### Reads
 
-- Beim Start sofort, danach alle 5 Minuten (einstellbar, 1 bis 60), auch bei
-  geschlossenem Fenster.
-- Beim Öffnen des Fensters, wenn der letzte Versuch älter als 60 Sekunden ist.
-- Auf Knopfdruck sofort.
-- 30 Sekunden nach dem Reset eines Fensters, das die Warnschwelle erreicht
-  hatte.
-- Nie zwei Lesevorgänge gleichzeitig. Zeitlimit 60 Sekunden.
+- At startup immediately, then every 5 minutes (configurable, 1 to 60), also
+  with the window closed.
+- When the window is opened, if the last attempt is older than 60 seconds.
+- Immediately at the press of a button.
+- 30 seconds after the reset of a window that had reached the warning
+  threshold.
+- Never two reads at the same time. Timeout 60 seconds.
 
-`quota-axi` sucht Pegel in dieser Reihenfolge: Pfad aus den Einstellungen, dann
-`PATH`. Schlägt beides fehl, startet Pegel es über die Login-Shell des
-Benutzers, wie die herdr-Mod, und liest ab der ersten geschweiften Klammer.
+Pegel looks for `quota-axi` in this order: path from the settings, then
+`PATH`. If both fail, Pegel starts it through the user's login shell, like
+the herdr mod, and reads from the first curly brace on.
 
-Scheitert ein Lesevorgang ganz (Programm fehlt, Exit-Code, kein JSON, Zeitlimit,
-unbekannte `schemaVersion`), bleibt der letzte gute Stand stehen und wird
-ausgegraut, sobald er alt ist. Darüber steht sofort der Fehler mit dem Alter
-des Stands, bei fehlendem Programm mit dem Installationshinweis. Eine unbekannte `schemaVersion` ist ein Fehler und
-wird nicht auf Verdacht dargestellt.
+If a read fails completely (program missing, exit code, no JSON, timeout,
+unknown `schemaVersion`), the last good reading stays and is grayed out
+as soon as it is old. Above it the error appears immediately with the age
+of the reading, and with the installation hint if the program is missing. An unknown `schemaVersion` is an error and
+is not displayed on a guess.
 
-### Tray-Icon
+### Tray icon
 
-Das Icon ist selbst ein kleiner Pegel: Die Füllhöhe zeigt den höchsten
-gezählten Verbrauch, die Farbe dessen Stufe. Ohne Daten ist es leer. Bei einem
-Lesefehler oder einem Eintrag mit Problem trägt es das Overlay
-`dialog-warning`, wie bei Hafen. Der Tooltip nennt je Eintrag den höchsten
-Wert.
+The icon is itself a small level gauge: the fill height shows the highest
+counted usage, the color its level. Without data it is empty. On a read
+error or an entry with a problem it carries the overlay
+`dialog-warning`, as in Hafen. The tooltip names the highest value per
+entry.
 
-Gezählt werden Fenster der Arten, die in den Einstellungen angehakt sind.
-Vorgabe: 5 Stunden, Woche und Monat ja, Modell-Limits nein. Ausgeblendete
-Einträge und alte Stände zählen nicht.
+Counted are windows of the kinds that are checked in the settings.
+Default: 5 hours, week and month yes, model limits no. Hidden
+entries and old readings do not count.
 
-Das Kontextmenü bietet „Jetzt aktualisieren“ und „Einstellungen“ über den
-Einträgen, die `KStatusNotifierItem` selbst mitbringt.
+The context menu offers "Refresh now" and "Settings" above the
+entries that `KStatusNotifierItem` brings along itself.
 
-### Benachrichtigungen
+### Notifications
 
-Abschaltbar. Je gezähltem Fenster und Zyklus höchstens einmal je Ereignis:
+Can be switched off. Per counted window and cycle at most once per event:
 
-- Die Warnschwelle ist erreicht (Vorgabe 90 %).
-- Das Fenster ist aufgebraucht.
-- Ein aufgebrauchtes Fenster ist nach dem Reset wieder frei.
+- The warning threshold is reached (default 90 %).
+- The window is used up.
+- A used-up window is free again after the reset.
 
-Ein Zyklus ist bestimmt durch Eintrag, Fenster-`id` und `resetsAt`. Beim ersten
-Lesen nach dem Start meldet Pegel nichts, es merkt sich nur den Stand.
+A cycle is defined by entry, window `id` and `resetsAt`. On the first
+read after startup Pegel reports nothing; it only remembers the reading.
 
-### Fenster und Einstellungen
+### Window and settings
 
-Das Fenster ist 340 breit wie bei Hafen und merkt sich seine Größe. Schließen
-versteckt es. Ein zweiter Start holt das laufende Fenster nach vorn. `--hidden`
-startet nur das Tray-Icon.
+The window is 340 wide as in Hafen and remembers its size. Closing
+hides it. A second start brings the running window to the front. `--hidden`
+starts only the tray icon.
 
-Kopfzeile: „Kontingente · vor 2 Min“, Aktualisieren, Einstellungen.
+Header: "Quota · 2 min ago", refresh, settings.
 
-Einstellungen: Leseintervall, Benachrichtigungen und Schwelle, gezählte
-Fensterarten, je Eintrag Name und Sichtbarkeit, Claude-Profilordner, nicht
-eingerichtete Anbieter anzeigen, Pfad zu `quota-axi`, Autostart.
+Settings: read interval, notifications and threshold, counted
+window kinds, name and visibility per entry, Claude profile folders, show
+providers that are not set up, path to `quota-axi`, autostart.
 
-Quelltexte sind englisch mit `qsTr`, dazu `i18n/pegel_de.ts`. README und
-Changelog sind deutsch, wie bei Hafen.
+Source texts are English with `qsTr`, plus `i18n/pegel_de.ts`. README,
+changelog and all other documents are English, as in Hafen.
 
 ## Tests
 
-- `tests/model.cases.mjs` läuft unter Node (`node --test`) und in Qt. Abgedeckt
-  sind: Schlüssel und Namen bei mehreren Konten, jede Zeile der beiden
-  Sonderfall-Tabellen, Stufen, Tempo, Zählung für das Icon, Meldungen je
-  Zyklus, Profilsuche, Fehlerfälle beim Lesen.
-- UI-Tests wie bei Hafen: das echte `Main.qml` gegen ein falsches `quota-axi`
-  im Testordner, ohne Bildschirm und auf einem eigenen D-Bus.
-- CI wie bei Hafen: Tests, Metadaten prüfen, bauen, `.deb` für beide
-  Ubuntu-Versionen, Release beim Tag.
+- `tests/model.cases.mjs` runs under Node (`node --test`) and in Qt. Covered
+  are: keys and names with several accounts, every row of the two
+  special-case tables, levels, pace, counting for the icon, notifications per
+  cycle, profile search, error cases when reading.
+- UI tests as in Hafen: the real `Main.qml` against a fake `quota-axi`
+  in the test folder, without a screen and on its own D-Bus.
+- CI as in Hafen: tests, check metadata, build, `.deb` for both
+  Ubuntu versions, release on tag.
 
-## Abnahme
+## Acceptance
 
-1. Mit zwei Claude-Profilen stehen zwei Claude-Einträge mit verschiedenen Namen
-   und Tarifen im Fenster, jeder mit eigenen Fenstern.
-2. Ein Fenster ohne `percentUsed` zeigt „—“ und nie „0 %“.
-3. Ist `quota-axi` nicht auffindbar, steht im Fenster, was fehlt und wie man es
-   installiert. Das Icon trägt das Warn-Overlay.
-4. Ein Stand, der älter ist als zwei Leseintervalle, ist ausgegraut, nennt
-   sein Alter und zählt nicht für das Icon.
-5. Aus einem Terminal mit gesetztem `CLAUDE_CONFIG_DIR` gestartet, zeigt Pegel
-   dieselben Einträge wie aus dem Menü gestartet.
-6. Testdaten und Dokumente nennen nur `example.com` und erfundene Namen. Kein
-   Pfad im Repository beginnt mit einem echten Home-Verzeichnis.
-7. `ctest` und `node --test tests/*.test.mjs` laufen durch; `cpack -G DEB`
-   erzeugt ein installierbares Paket.
+1. With two Claude profiles, the window shows two Claude entries with different
+   names and plans, each with its own limit windows.
+2. A window without `percentUsed` shows "—" and never "0 %".
+3. If `quota-axi` cannot be found, the window says what is missing and how to
+   install it. The icon carries the warning overlay.
+4. A reading that is older than two read intervals is grayed out, states
+   its age and does not count for the icon.
+5. Started from a terminal with `CLAUDE_CONFIG_DIR` set, Pegel shows
+   the same entries as when started from the menu.
+6. Test data and documents name only `example.com` and invented names. No
+   path in the repository starts with a real home directory.
+7. `ctest` and `node --test tests/*.test.mjs` pass; `cpack -G DEB`
+   produces an installable package.
 
-## Dem Bau überlassen
+## Left to the implementation
 
-- Aussehen von App-Icon, Tray-Pegel und Kürzeln, die Farbe der dritten Stufe.
-- Aufteilung von `Main.qml` in weitere Dateien.
-- Genaue Texte und ihre Übersetzung.
-- Ob ausgeblendete Anbieter per `--provider` gar nicht erst gelesen werden.
-- Zeitformat für „gegen 22:37“ bei Zeitpunkten an einem anderen Tag.
+- Look of app icon, tray gauge and abbreviations, the color of the third level.
+- Splitting `Main.qml` into further files.
+- Exact texts and their translation.
+- Whether hidden providers are not read at all via `--provider`.
+- Time format for "around 22:37" for points in time on another day.
