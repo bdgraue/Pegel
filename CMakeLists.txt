@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 cmake_minimum_required(VERSION 3.21)
-project(pegel VERSION 0.1.1 LANGUAGES CXX
+project(pegel VERSION 0.1.2 LANGUAGES CXX
     DESCRIPTION "AI coding quota in the system tray"
     HOMEPAGE_URL "https://github.com/bdgraue/Pegel")
 

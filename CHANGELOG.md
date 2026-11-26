@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 · 26 November 2026
+
+A limit that is used up is reported once per cycle. Before, Pegel repeated the notification whenever the provider reported a slightly different reset time for the same cycle.
+
 ## 0.1.1 · 25 November 2026
 
 The settings dialog keeps its right margin when a scrollbar appears. Profile folders, the path to quota-axi and autostart now come before the account list, and "Show providers that are not set up" sits directly above it. README, changelog, CI step names and the design documents are in English.
