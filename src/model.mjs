@@ -273,6 +273,15 @@ export function trayState(report, options, now, readError) {
              warning, tooltip: lines.join("\n") };
 }
 
+// Providers recompute the reset time on every reading: Claude's moved by 0.8 s between two readings
+// 25 s apart. A new cycle moves it by hours, so a shift below this tolerance is the same cycle.
+const RESET_JITTER_MS = 5 * 60 * 1000;
+
+function sameCycle(previousResetsAt, resetsAt) {
+    if (previousResetsAt === null || resetsAt === null) return previousResetsAt === resetsAt;
+    return Math.abs(resetsAt - previousResetsAt) < RESET_JITTER_MS;
+}
+
 export function notifications(memory, report, options, now) {
     const names = laneNames(report?.lanes || [], options.names);
     const cycles = Object.assign({}, memory.cycles);
@@ -281,8 +290,8 @@ export function notifications(memory, report, options, now) {
         const lane = item.lane, w = item.window;
         const key = lane.key + "|" + w.id;
         const previous = cycles[key];
-        const changed = previous && previous.resetsAt !== w.resetsAt;
-        const state = previous && !changed ? Object.assign({}, previous)
+        const changed = previous && !sameCycle(previous.resetsAt, w.resetsAt);
+        const state = previous && !changed ? Object.assign({}, previous, { resetsAt: w.resetsAt })
                                           : { resetsAt: w.resetsAt, warned: false, exhausted: false };
         const label = windowLabel(lane, w);
         function send(body, icon) {

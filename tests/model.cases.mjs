@@ -95,6 +95,23 @@ cases["notifies once per cycle and primes silently"] = a => {
     a.deepEqual(step(95,380,false),[]);
     a.deepEqual(step(95,380),[]);
 };
+cases["keeps the cycle when the reported reset time only jitters"] = a => {
+    let memory={primed:false,cycles:{}};
+    function step(p,reset) {
+        const r=report([row({windows:[win({percentUsed:p,resetsAt:iso(reset)})]})]);
+        const result=M.notifications(memory,r,opts,NOW);
+        memory=result.memory;
+        return result.messages.map(x=>x.body);
+    }
+    a.deepEqual(step(50,80),[]);
+    a.deepEqual(step(100,80),["5 hours used up, free from 13:20"]);
+    a.deepEqual(step(100,80-0.8/60),[]);
+    a.deepEqual(step(100,80+0.4),[]);
+    a.deepEqual(step(95,80-0.8/60),[]);
+    a.deepEqual(step(3,380),["5 hours available again"]);
+    a.deepEqual(step(95,380+0.4),["5 hours at 95 %"]);
+    a.deepEqual(step(96,380-0.4),[]);
+};
 cases["discovers profiles and starts quota-axi with a clean environment"] = a => {
     const c=(path,flags)=>Object.assign({path,canonicalPath:path,isDir:true},flags);
     const p=M.claudeProfiles([c("/a",{hasSettings:true}),c("/b",{manual:true}),c("/alias",{manual:true,canonicalPath:"/a"}),
